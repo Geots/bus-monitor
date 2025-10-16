@@ -2,6 +2,9 @@
   "expo": {
     "name": "bus-monitor",
     "slug": "bus-monitor",
+    "extra": {
+      "googleMapsApiKey": "AIzaSyCD3qK5TyQUEZXgiD9h0JEm_xluFndP1gg"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +24,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleMaps": {
+        "apiKey": "AIzaSyCD3qK5TyQUEZXgiD9h0JEm_xluFndP1gg"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
