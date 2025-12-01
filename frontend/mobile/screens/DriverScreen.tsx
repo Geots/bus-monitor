@@ -6,8 +6,8 @@ import Constants from "expo-constants";
 
 const GOOGLE_MAPS_API_KEY = Constants.expoConfig?.extra?.googleMapsApiKey ?? "";
 
-const from = { latitude: 37.773972, longitude: -122.431297 };
-const to = { latitude: 37.7749, longitude: -122.4194 };
+const from = { latitude: 37.9838, longitude: 23.7275 };
+const to = { latitude: 37.9842, longitude: 23.7298 };
 
 export default function DriverScreen() {
   const [route, setRoute] = useState<{ latitude: number; longitude: number }[]>([]);
