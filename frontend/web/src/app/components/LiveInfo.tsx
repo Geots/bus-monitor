@@ -16,7 +16,7 @@ const BusTracker: React.FC<BusTrackerProps> = ({ selectedBus }) => {
 
   const THRESHOLD_HEAT = 600.0;
   const THRESHOLD_DIST = 10.0;
-  const THRESHOLD_ACCEL = 2.0;
+  const THRESHOLD_SPEED = 80.0;
 
   useEffect(() => {
     const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
@@ -101,19 +101,17 @@ const BusTracker: React.FC<BusTrackerProps> = ({ selectedBus }) => {
           </div>
         </div>
 
-        {/* Acceleration */}
+        {/* Speed */}
         <div
           className={`p-6 rounded-xl shadow-md transition-colors duration-300 ${
-            selectedBus && Math.abs(selectedBus.accel_x) >= THRESHOLD_ACCEL
+            selectedBus && selectedBus.speed >= THRESHOLD_SPEED
               ? "bg-red-500 text-white"
               : "bg-white text-gray-800"
           }`}
         >
-          <h2 className="text-sm uppercase tracking-wider opacity-75">
-            Accel (X)
-          </h2>
+          <h2 className="text-sm uppercase tracking-wider opacity-75">Speed</h2>
           <div className="text-4xl font-bold mt-2">
-            {selectedBus ? `${selectedBus.accel_x.toFixed(2)} g` : "-"}
+            {selectedBus ? `${selectedBus.speed.toFixed(1)} km/h` : "-"}
           </div>
         </div>
       </div>
