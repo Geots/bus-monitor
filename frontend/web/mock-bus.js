@@ -18,8 +18,8 @@ let cooldownTimer = 0;
 
 // Start exactly at the map center (Athens)
 let currentData = {
-    lat: 37.9838, 
-    lng: 23.7275,
+    gps_lat: 37.9838, 
+    gps_lng: 23.7275,
     accel_x: 0.05,
     distance: 250,
     temp: 24.5,
@@ -97,11 +97,11 @@ function simulateBusLoop() {
 
         // Calculate change in Lat/Lng
         const dLat = (distanceMeters * Math.cos(heading * Math.PI / 180)) / earthRadius;
-        const dLng = (distanceMeters * Math.sin(heading * Math.PI / 180)) / (earthRadius * Math.cos(currentData.lat * Math.PI / 180));
+        const dLng = (distanceMeters * Math.sin(heading * Math.PI / 180)) / (earthRadius * Math.cos(currentData.gps_lat * Math.PI / 180));
 
         // Apply change (convert radians back to degrees)
-        currentData.lat += (dLat * 180 / Math.PI);
-        currentData.lng += (dLng * 180 / Math.PI);
+        currentData.gps_lat += (dLat * 180 / Math.PI);
+        currentData.gps_lng += (dLng * 180 / Math.PI);
     }
 
     // 3. SMOOTH SENSOR DATA
@@ -127,8 +127,8 @@ function simulateBusLoop() {
 
     // 5. SEND PAYLOAD
     const payload = {
-        lat: parseFloat(currentData.lat.toFixed(6)),
-        lng: parseFloat(currentData.lng.toFixed(6)),
+        gps_lat: parseFloat(currentData.gps_lat.toFixed(6)),
+        gps_lng: parseFloat(currentData.gps_lng.toFixed(6)),
         accel_x: parseFloat(currentData.accel_x.toFixed(2)),
         distance: Math.round(currentData.distance),
         temp: parseFloat(currentData.temp.toFixed(1)),
@@ -139,7 +139,7 @@ function simulateBusLoop() {
     
     // Log for debugging
     const icon = speed === 0 ? '🛑' : '🚌';
-    console.log(`[${icon}] Lat:${payload.lat} Lng:${payload.lng} | Spd:${speed}km/h | G:${payload.accel_x}`);
+    console.log(`[${icon}] Lat:${payload.gps_lat} Lng:${payload.gps_lng} | Spd:${speed}km/h | G:${payload.accel_x}`);
 
     // 6. SEND WARNINGS (If any)
     let warningMessage = "";

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import PolylineDecoder from "polyline";
 import Constants from "expo-constants";
@@ -10,7 +10,9 @@ const from = { latitude: 37.9838, longitude: 23.7275 };
 const to = { latitude: 37.9842, longitude: 23.7298 };
 
 export default function DriverScreen() {
-  const [route, setRoute] = useState<{ latitude: number; longitude: number }[]>([]);
+  const [route, setRoute] = useState<{ latitude: number; longitude: number }[]>(
+    []
+  );
 
   useEffect(() => {
     const fetchRoute = async () => {
@@ -35,11 +37,12 @@ export default function DriverScreen() {
         const data = await response.json();
         const encoded = data.routes?.[0]?.polyline?.encodedPolyline;
         if (encoded) {
-          const decoded = (PolylineDecoder.decode(encoded) as [number, number][])
-            .map(([lat, lng]) => ({
-              latitude: lat,
-              longitude: lng,
-            }));
+          const decoded = (
+            PolylineDecoder.decode(encoded) as [number, number][]
+          ).map(([lat, lng]) => ({
+            latitude: lat,
+            longitude: lng,
+          }));
           setRoute(decoded);
         }
       } catch (error) {
@@ -85,51 +88,51 @@ export default function DriverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
     padding: 20,
   },
   mapContainer: {
-    width: '100%',
-    height: '80%',
+    width: "100%",
+    height: "80%",
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
+    backgroundColor: "#fff",
+    overflow: "hidden",
   },
   map: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 12,
   },
   infoContainer: {
-    width: '100%',
-    height: '10%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    width: "100%",
+    height: "10%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
     marginTop: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
   },
   infoText: {
-    color: '#000',
+    color: "#000",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   numberText: {
-    color: '#58aa32',
+    color: "#58aa32",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

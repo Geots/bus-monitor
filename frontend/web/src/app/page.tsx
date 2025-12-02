@@ -25,8 +25,6 @@ export interface Bus {
   lng: number;
   speed: number;
   students: number;
-  smoking: boolean;
-  alcohol: boolean;
   speeding: boolean;
   temp: number;
   distance: number;
@@ -36,13 +34,11 @@ export interface Bus {
 const initialBuses: Bus[] = [
   {
     id: 1,
-    name: "Bus 1 (Live Tracker)",
+    name: "Bus 1",
     lat: 37.9838,
     lng: 23.7275,
     speed: 0,
     students: 10,
-    smoking: false,
-    alcohol: false,
     speeding: false,
     temp: 22.5,
     distance: 150,
@@ -50,13 +46,11 @@ const initialBuses: Bus[] = [
   },
   {
     id: 2,
-    name: "Bus 2 (Static - Obstruction)",
+    name: "Bus 2",
     lat: 37.9842,
     lng: 23.7298,
     speed: 52,
     students: 15,
-    smoking: false,
-    alcohol: false,
     speeding: true,
     temp: 24.0,
     distance: 8.5,
@@ -64,13 +58,11 @@ const initialBuses: Bus[] = [
   },
   {
     id: 3,
-    name: "Bus 3 (Static - Aggressive)",
+    name: "Bus 3",
     lat: 37.9829,
     lng: 23.7251,
     speed: 38,
     students: 20,
-    smoking: false,
-    alcohol: true,
     speeding: false,
     temp: 21.0,
     distance: 200,
@@ -78,13 +70,11 @@ const initialBuses: Bus[] = [
   },
   {
     id: 4,
-    name: "Bus 4 (Static - Overheat)",
+    name: "Bus 4",
     lat: 37.9851,
     lng: 23.7315,
     speed: 60,
     students: 5,
-    smoking: true,
-    alcohol: false,
     speeding: false,
     temp: 650,
     distance: 300,
@@ -96,12 +86,10 @@ export default function Home() {
   const [buses, setBuses] = useState<Bus[]>(initialBuses);
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
 
-  // MQTT Connection Logic
   useEffect(() => {
     const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
 
     client.on("connect", () => {
-      console.log("🌍 Map Component Connected to MQTT Broker");
       client.subscribe("bus_tracker/data");
     });
 
@@ -110,19 +98,14 @@ export default function Home() {
         try {
           const payload = JSON.parse(message.toString());
 
-          // 1. Update Map Markers
           setBuses((prevBuses) =>
             prevBuses.map((bus) => {
               if (bus.id === 1) {
                 return {
                   ...bus,
-                  // FIX: Check for 'gps_lat' first, then 'lat', then fallback
-                  lat: payload.gps_lat ?? payload.lat ?? bus.lat,
-                  lng: payload.gps_lng ?? payload.lng ?? bus.lng,
-
-                  // FIX: Map 'gps_speed' to 'speed'
+                  lat: payload.gps_lat,
+                  lng: payload.gps_lng,
                   speed: payload.gps_speed ?? 40,
-
                   temp: payload.temp ?? bus.temp,
                   students: payload.students ?? bus.students,
                   distance: payload.distance ?? bus.distance,
@@ -133,14 +116,13 @@ export default function Home() {
             })
           );
 
-          // 2. Update Popup Info (Apply the same fix here)
           setSelectedBus((prevSelected) => {
             if (prevSelected && prevSelected.id === 1) {
               return {
                 ...prevSelected,
-                lat: payload.gps_lat ?? payload.lat ?? prevSelected.lat,
-                lng: payload.gps_lng ?? payload.lng ?? prevSelected.lng,
-                speed: payload.gps_speed ?? prevSelected.speed, // Update speed for popup too
+                lat: payload.gps_lat ?? prevSelected.lat,
+                lng: payload.gps_lng ?? prevSelected.lng,
+                speed: payload.gps_speed ?? prevSelected.speed,
                 temp: payload.temp ?? prevSelected.temp,
                 students: payload.students ?? prevSelected.students,
                 distance: payload.distance ?? prevSelected.distance,
@@ -150,7 +132,7 @@ export default function Home() {
             return prevSelected;
           });
         } catch (error) {
-          console.error("Error parsing MQTT message:", error);
+          console.error("Error:", error);
         }
       }
     });
@@ -190,23 +172,9 @@ export default function Home() {
                   onCloseClick={() => setSelectedBus(null)}
                 >
                   <div className="p-2 min-w-[150px]">
-                    <h2 className="font-bold text-lg mb-2 border-b pb-1">
+                    <h2 className="font-bold text-lg mb-2">
                       {selectedBus.name}
                     </h2>
-                    <p className="text-sm">
-                      <strong>Status:</strong>{" "}
-                      {selectedBus.speed > 0 ? "Moving" : "Stopped"}
-                    </p>
-                    <p className="text-sm">
-                      <strong>Occupancy:</strong> {selectedBus.students}
-                    </p>
-                    {(selectedBus.temp > 600 ||
-                      selectedBus.distance < 10 ||
-                      Math.abs(selectedBus.accel_x) > 2) && (
-                      <p className="text-xs font-bold text-red-600 mt-2">
-                        ⚠️ WARNINGS ACTIVE
-                      </p>
-                    )}
                   </div>
                 </InfoWindow>
               )}
