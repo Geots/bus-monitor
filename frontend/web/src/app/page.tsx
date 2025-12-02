@@ -9,6 +9,7 @@ import {
 } from "@react-google-maps/api";
 import mqtt from "mqtt";
 import BusTracker from "./components/LiveInfo";
+import BusList from "./components/BusList";
 
 const mapContainerStyle = {
   width: "100%",
@@ -28,7 +29,6 @@ export interface Bus {
   speeding: boolean;
   temp: number;
   distance: number;
-  accel_x: number;
 }
 
 const initialBuses: Bus[] = [
@@ -42,7 +42,6 @@ const initialBuses: Bus[] = [
     speeding: false,
     temp: 22.5,
     distance: 150,
-    accel_x: 0.1,
   },
   {
     id: 2,
@@ -54,19 +53,17 @@ const initialBuses: Bus[] = [
     speeding: true,
     temp: 24.0,
     distance: 8.5,
-    accel_x: 0.5,
   },
   {
     id: 3,
     name: "Bus 3",
     lat: 37.9829,
     lng: 23.7251,
-    speed: 38,
+    speed: 85,
     students: 20,
     speeding: false,
     temp: 21.0,
     distance: 200,
-    accel_x: 2.5,
   },
   {
     id: 4,
@@ -78,7 +75,6 @@ const initialBuses: Bus[] = [
     speeding: false,
     temp: 650,
     distance: 300,
-    accel_x: 0.2,
   },
 ];
 
@@ -101,36 +97,28 @@ export default function Home() {
           setBuses((prevBuses) =>
             prevBuses.map((bus) => {
               if (bus.id === 1) {
-                return {
+                const newBusData = {
                   ...bus,
-                  lat: payload.gps_lat,
-                  lng: payload.gps_lng,
-                  speed: payload.gps_speed ?? 40,
+                  lat: payload.gps_lat ?? bus.lat,
+                  lng: payload.gps_lng ?? bus.lng,
+                  speed: payload.gps_speed ?? bus.speed,
                   temp: payload.temp ?? bus.temp,
                   students: payload.students ?? bus.students,
                   distance: payload.distance ?? bus.distance,
-                  accel_x: payload.accel_x ?? bus.accel_x,
                 };
+
+                setSelectedBus((currentSelected) => {
+                  if (currentSelected && currentSelected.id === 1) {
+                    return newBusData;
+                  }
+                  return currentSelected;
+                });
+
+                return newBusData;
               }
               return bus;
             })
           );
-
-          setSelectedBus((prevSelected) => {
-            if (prevSelected && prevSelected.id === 1) {
-              return {
-                ...prevSelected,
-                lat: payload.gps_lat ?? prevSelected.lat,
-                lng: payload.gps_lng ?? prevSelected.lng,
-                speed: payload.gps_speed ?? prevSelected.speed,
-                temp: payload.temp ?? prevSelected.temp,
-                students: payload.students ?? prevSelected.students,
-                distance: payload.distance ?? prevSelected.distance,
-                accel_x: payload.accel_x ?? prevSelected.accel_x,
-              };
-            }
-            return prevSelected;
-          });
         } catch (error) {
           console.error("Error:", error);
         }
@@ -143,47 +131,73 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-sans min-h-screen pb-20 gap-16">
-      <div className="flex flex-col items-center">
-        <h1 className="w-full text-4xl font-bold mb-8 bg-[#58aa32] text-white p-4 text-center">
-          Bus Monitor
-        </h1>
+    <div className="font-sans min-h-screen bg-gray-200 flex flex-col">
+      {/* Header */}
+      <h1 className="w-full text-4xl font-bold mb-6 bg-[#58aa32] text-white p-4 text-center shadow-md">
+        Bus Monitor
+      </h1>
 
-        <div className="w-5/6 h-80 md:h-100 lg:h-150 bg-gray-200 rounded-md shadow-lg">
-          <LoadScript
-            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-          >
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={center}
-              zoom={15}
+      <div className="max-w-[95%] mx-auto mt-8 flex-grow w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[650px]">
+          <div className="lg:col-span-2 h-full">
+            <BusList
+              buses={buses}
+              selectedBus={selectedBus}
+              onSelect={setSelectedBus}
+            />
+          </div>
+
+          <div className="lg:col-span-7 h-full bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden relative">
+            <LoadScript
+              googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
             >
-              {buses.map((bus) => (
-                <Marker
-                  key={bus.id}
-                  position={{ lat: bus.lat, lng: bus.lng }}
-                  onClick={() => setSelectedBus(bus)}
-                />
-              ))}
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={
+                  selectedBus
+                    ? { lat: selectedBus.lat, lng: selectedBus.lng }
+                    : center
+                }
+                zoom={15}
+              >
+                {buses.map((bus) => (
+                  <Marker
+                    key={bus.id}
+                    position={{ lat: bus.lat, lng: bus.lng }}
+                    onClick={() => setSelectedBus(bus)}
+                  />
+                ))}
 
-              {selectedBus && (
-                <InfoWindow
-                  position={{ lat: selectedBus.lat, lng: selectedBus.lng }}
-                  onCloseClick={() => setSelectedBus(null)}
-                >
-                  <div className="p-2 min-w-[150px]">
-                    <h2 className="font-bold text-lg mb-2">
-                      {selectedBus.name}
-                    </h2>
-                  </div>
-                </InfoWindow>
-              )}
-            </GoogleMap>
-          </LoadScript>
+                {selectedBus && (
+                  <InfoWindow
+                    position={{ lat: selectedBus.lat, lng: selectedBus.lng }}
+                    onCloseClick={() => setSelectedBus(null)}
+                  >
+                    <div className="p-2 min-w-[150px]">
+                      <h2 className="font-bold text-lg text-gray-800">
+                        {selectedBus.name}
+                      </h2>
+                      <p className="text-gray-600">
+                        Speed: {selectedBus.speed.toFixed(1)} km/h
+                      </p>
+                    </div>
+                  </InfoWindow>
+                )}
+              </GoogleMap>
+            </LoadScript>
+          </div>
+
+          {/* Live Info */}
+          <div className="lg:col-span-3 h-full">
+            <BusTracker selectedBus={selectedBus} />
+          </div>
         </div>
-
-        <BusTracker selectedBus={selectedBus} />
       </div>
+
+      {/* Footer */}
+      <h1 className="w-full text-4xl font-bold bg-[#58aa32] text-white p-4 text-center shadow-md mt-6">
+        Footer
+      </h1>
     </div>
   );
 }

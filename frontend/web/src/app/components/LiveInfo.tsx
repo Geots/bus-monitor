@@ -44,91 +44,95 @@ const BusTracker: React.FC<BusTrackerProps> = ({ selectedBus }) => {
   }, []);
 
   return (
-    <div className="p-6 max-w-6xl mx-2 bg-gray-50 font-sans mt-8 rounded-xl border border-gray-200 shadow-sm">
-      <header className="mb-6 flex justify-between items-center">
+    <div className="p-4 bg-gray-50 h-full rounded-xl border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+      <header className="mb-4 flex justify-between items-center shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Bus Information</h1>
-          <p className="text-md text-gray-600 mt-1">
+          <h1 className="text-xl font-bold text-gray-800">Bus Information</h1>
+          <p className="text-sm text-gray-600 mt-1">
             Selected:{" "}
             <span className="font-bold text-[#58aa32]">
-              {selectedBus?.name || "None"}
+              {selectedBus?.name || "No Bus Selected"}
             </span>
           </p>
         </div>
-        <span className={`rounded-full text-sm font-bold`}>MQTT: {status}</span>
+        <span className="text-xs bg-gray-200 px-2 py-1 rounded-full text-gray-600 font-mono">
+          {status}
+        </span>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 gap-3 mb-4 shrink-0">
         {/* Students */}
-        <div className="p-6 rounded-xl shadow-md text-gray-800 transition-colors duration-300">
-          <h2 className="text-sm uppercase tracking-wider opacity-80">
+        <div className="p-4 rounded-xl shadow-sm bg-white text-gray-800 border border-gray-100">
+          <h2 className="text-[10px] uppercase tracking-wider opacity-60">
             Students
           </h2>
-          <div className="text-4xl font-bold mt-2">
+          <div className="text-2xl font-bold mt-1">
             {selectedBus ? selectedBus.students : "-"}
           </div>
         </div>
 
         {/* Temperature */}
         <div
-          className={`p-6 rounded-xl shadow-md transition-colors duration-300 ${
+          className={`p-4 rounded-xl shadow-sm border border-gray-100 transition-colors duration-300 ${
             selectedBus && selectedBus.temp > THRESHOLD_HEAT
               ? "bg-red-500 text-white"
               : "bg-white text-gray-800"
           }`}
         >
-          <h2 className="text-sm uppercase tracking-wider opacity-75">
-            Temperature
+          <h2 className="text-[10px] uppercase tracking-wider opacity-60">
+            Temp
           </h2>
-          <div className="text-4xl font-bold mt-2">
+          <div className="text-2xl font-bold mt-1">
             {selectedBus ? `${selectedBus.temp}°C` : "-"}
           </div>
         </div>
 
         {/* Distance */}
         <div
-          className={`p-6 rounded-xl shadow-md transition-colors duration-300 ${
+          className={`p-4 rounded-xl shadow-sm border border-gray-100 transition-colors duration-300 ${
             selectedBus && selectedBus.distance <= THRESHOLD_DIST
               ? "bg-red-500 text-white"
               : "bg-white text-gray-800"
           }`}
         >
-          <h2 className="text-sm uppercase tracking-wider opacity-75">
-            Proximity
+          <h2 className="text-[10px] uppercase tracking-wider opacity-60">
+            Prox.
           </h2>
-          <div className="text-4xl font-bold mt-2">
+          <div className="text-2xl font-bold mt-1">
             {selectedBus ? `${selectedBus.distance} cm` : "-"}
           </div>
         </div>
 
         {/* Speed */}
         <div
-          className={`p-6 rounded-xl shadow-md transition-colors duration-300 ${
+          className={`p-4 rounded-xl shadow-sm border border-gray-100 transition-colors duration-300 ${
             selectedBus && selectedBus.speed >= THRESHOLD_SPEED
               ? "bg-red-500 text-white"
               : "bg-white text-gray-800"
           }`}
         >
-          <h2 className="text-sm uppercase tracking-wider opacity-75">Speed</h2>
-          <div className="text-4xl font-bold mt-2">
-            {selectedBus ? `${selectedBus.speed.toFixed(1)} km/h` : "-"}
+          <h2 className="text-[10px] uppercase tracking-wider opacity-60">
+            Speed
+          </h2>
+          <div className="text-2xl font-bold mt-1">
+            {selectedBus ? `${selectedBus.speed.toFixed(0)} km/h` : "-"}
           </div>
         </div>
       </div>
 
       {/* Warnings */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col min-h-0">
+        <h3 className="text-sm font-bold text-gray-800 mb-2 border-b pb-2 shrink-0">
           Warnings
         </h3>
-        <div className="space-y-2 max-h-60 overflow-y-auto">
+        <div className="space-y-2 overflow-y-auto flex-1 pr-1">
           {warnings.length === 0 ? (
-            <p className="text-gray-400 italic">No warnings ...</p>
+            <p className="text-gray-400 text-xs italic">No warnings.</p>
           ) : (
             warnings.map((warn, index) => (
               <div
                 key={index}
-                className="p-3 bg-red-50 text-red-700 rounded text-sm font-mono shadow-sm"
+                className="p-2 bg-red-50 text-red-700 rounded text-xs font-mono border border-red-100"
               >
                 {warn}
               </div>
