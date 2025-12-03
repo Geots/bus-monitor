@@ -38,7 +38,7 @@
 Απαιτούνται οι δύο κύριοι μικροελεγκτές και οι ακόλουθοι αισθητήρες:
 * **Controller:** Arduino Uno Rev3, ESP8266 Dev Board.
 * **Sensors:** MFRC522 RFID, ADXL343 Accelerometer, DHT22, HC-SR04, Garmin eTrex PCB (ως GPS module).
-* **Interface:** Logic Level Shifter ($5\text{V} / 3.3\text{V}$).
+* **Interface:** Logic Level Shifter 5V/3.3V.
 
 ### 3.2. Απαιτήσεις Λογισμικού (Libraries)
 Πρέπει να εγκατασταθούν οι ακόλουθες βιβλιοθήκες μέσω του Library Manager του Arduino IDE:
@@ -53,4 +53,5 @@
 Πριν την φόρτωση του κώδικα στο ESP8266, πρέπει να ρυθμιστούν τα διαπιστευτήρια Wi-Fi:
 ```cpp
 const char* ssid = "YOUR_WIFI_SSID"; 
+
 const char* password = "YOUR_WIFI_PASSWORD";
