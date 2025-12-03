@@ -31,6 +31,7 @@ export interface Bus {
   distance: number;
 }
 
+// Mock bus data
 const initialBuses: Bus[] = [
   {
     id: 1,
@@ -131,11 +132,17 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-sans min-h-screen bg-gray-200 flex flex-col">
+    <div className="font-sans min-h-screen bg-gray-300 flex flex-col">
       {/* Header */}
-      <h1 className="w-full text-4xl font-bold mb-6 bg-[#58aa32] text-white p-4 text-center shadow-md">
-        Bus Monitor
-      </h1>
+      <div className="w-full mb-2 bg-gradient-to-r from-green-900 to-emerald-700 text-white p-4 shadow-md flex flex-col md:flex-row items-center justify-center gap-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-center">
+          Bus Monitor Admin
+        </h1>
+        <div className="hidden md:block w-1 h-10 bg-gray-200 rounded-full"></div>
+        <p className="text-xl font-semibold md:text-2xl text-center">
+          Κυβερνοφυσικά Συστήματα
+        </p>
+      </div>
 
       <div className="max-w-[95%] mx-auto mt-8 flex-grow w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[650px]">
@@ -147,7 +154,8 @@ export default function Home() {
             />
           </div>
 
-          <div className="lg:col-span-7 h-full bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden relative">
+          {/* Map */}
+          <div className="lg:col-span-7 h-full bg-white rounded-xl shadow-xl overflow-hidden relative">
             <LoadScript
               googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
             >
@@ -195,9 +203,22 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <h1 className="w-full text-4xl font-bold bg-[#58aa32] text-white p-4 text-center shadow-md mt-6">
-        Footer
-      </h1>
+      <footer className="mt-8 bg-gradient-to-r from-green-900 to-emerald-700 text-white pt-6 pb-4 shadow-md">
+        <div className="max-w-5xl mx-auto text-center space-y-1">
+          <p className="text-lg font-bold leading-tight">
+            Πανεπιστήμιο Δυτικής Αττικής — Σχολή Μηχανικών, Τμήμα Μηχανικών
+            Βιομηχανικής Σχεδίασης και Παραγωγής
+          </p>
+          <p className="text-base text-emerald-100">
+            Μάθημα: Κυβερνοφυσικά Συστήματα (9007) — Απαλλακτική Εργασία
+            Εξαμήνου
+          </p>
+          <p className="text-sm text-emerald-200 font-light">
+            Ακαδημαϊκό Έτος: 2025–2026 • Θέμα Εργασίας: Σύστημα Παρακολούθησης
+            Σχολικών Λεωφορείων
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
