@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <>
-      <StatusBar style="light" backgroundColor="#58aa32" />
+      <StatusBar style="light" backgroundColor="#168A28" />
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"
@@ -47,7 +47,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   headerStyle: {
-    backgroundColor: "#58aa32",
+    backgroundColor: "#168A28",
     height: 120,
   },
   headerTitleStyle: {

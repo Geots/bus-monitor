@@ -1,85 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import PolylineDecoder from "polyline";
-import Constants from "expo-constants";
-
-const GOOGLE_MAPS_API_KEY = Constants.expoConfig?.extra?.googleMapsApiKey;
+import mqtt from "mqtt";
+import LiveMap from "./components/LiveMap";
 
 const from = { latitude: 37.9838, longitude: 23.7275 };
-const to = { latitude: 37.9842, longitude: 23.7298 };
+const destination = {
+  latitude: 37.97743299485048,
+  longitude: 23.673475337091762,
+};
 
 export default function DriverScreen() {
-  const [route, setRoute] = useState<{ latitude: number; longitude: number }[]>(
-    []
-  );
+  const [driverLocation, setDriverLocation] = useState(from);
+  const [studentCount, setStudentCount] = useState(20);
 
   useEffect(() => {
-    const fetchRoute = async () => {
-      try {
-        const response = await fetch(
-          "https://routes.googleapis.com/directions/v2:computeRoutes",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
-              "X-Goog-FieldMask": "routes.polyline.encodedPolyline",
-            },
-            body: JSON.stringify({
-              origin: { location: { latLng: from } },
-              destination: { location: { latLng: to } },
-              travelMode: "DRIVE",
-            }),
+    const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
+    const TOPIC_DATA = "bus_tracker/data";
+
+    client.on("connect", () => {
+      console.log("MQTT Connected");
+      client.subscribe(TOPIC_DATA);
+    });
+
+    client.on("message", (topic, message) => {
+      if (topic === TOPIC_DATA) {
+        try {
+          const payload = JSON.parse(message.toString());
+
+          if (payload.gps_lat && payload.gps_lng) {
+            setDriverLocation({
+              latitude: payload.gps_lat,
+              longitude: payload.gps_lng,
+            });
           }
-        );
 
-        const data = await response.json();
-        const encoded = data.routes?.[0]?.polyline?.encodedPolyline;
-        if (encoded) {
-          const decoded = (
-            PolylineDecoder.decode(encoded) as [number, number][]
-          ).map(([lat, lng]) => ({
-            latitude: lat,
-            longitude: lng,
-          }));
-          setRoute(decoded);
+          if (payload.students !== undefined) {
+            setStudentCount(payload.students);
+          }
+        } catch (error) {
+          console.error("Error parsing MQTT message:", error);
         }
-      } catch (error) {
-        console.error("Error fetching route:", error);
       }
-    };
+    });
 
-    fetchRoute();
+    return () => {
+      if (client.connected) client.end();
+    };
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.mapContainer}>
-        <MapView
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: from.latitude,
-            longitude: from.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          }}
-        >
-          <Marker coordinate={from} title="Start" />
-          <Marker coordinate={to} title="Destination" />
-          {route.length > 0 && (
-            <Polyline
-              coordinates={route}
-              strokeColor="#007bff"
-              strokeWidth={5}
-            />
-          )}
-        </MapView>
+      <View style={styles.mapWrapper}>
+        <LiveMap
+          currentLocation={driverLocation}
+          destination={destination}
+          markerTitle="Bus"
+        />
       </View>
+
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Students Present:</Text>
-        <Text style={styles.numberText}>20</Text>
+        <Text style={styles.infoText}>Students:</Text>
+        <Text style={styles.numberText}>{studentCount}</Text>
       </View>
     </View>
   );
@@ -92,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     padding: 20,
   },
-  mapContainer: {
+  mapWrapper: {
     width: "100%",
     height: "80%",
     borderRadius: 12,
@@ -102,12 +83,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
     backgroundColor: "#fff",
-    overflow: "hidden",
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 12,
   },
   infoContainer: {
     width: "100%",
