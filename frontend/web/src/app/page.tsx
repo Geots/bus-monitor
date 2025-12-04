@@ -17,7 +17,7 @@ const mapContainerStyle = {
   borderRadius: "10px",
 };
 
-const center = { lat: 37.9838, lng: 23.7275 };
+const center = { lat: 37.977420352150006, lng: 23.67338783592059 };
 
 export interface Bus {
   id: number;
@@ -35,8 +35,8 @@ const initialBuses: Bus[] = [
   {
     id: 1,
     name: "Bus 1",
-    lat: 37.9838,
-    lng: 23.7275,
+    lat: 37.990681948701905,
+    lng: 23.677086735467476,
     speed: 0,
     students: 10,
     speeding: false,
@@ -46,8 +46,8 @@ const initialBuses: Bus[] = [
   {
     id: 2,
     name: "Bus 2",
-    lat: 37.9842,
-    lng: 23.7298,
+    lat: 37.98759795365962,
+    lng: 23.658184262144296,
     speed: 52,
     students: 15,
     speeding: true,
@@ -57,8 +57,8 @@ const initialBuses: Bus[] = [
   {
     id: 3,
     name: "Bus 3",
-    lat: 37.9829,
-    lng: 23.7251,
+    lat: 37.97832834429297,
+    lng: 23.69721176174669,
     speed: 85,
     students: 20,
     speeding: false,
@@ -68,8 +68,8 @@ const initialBuses: Bus[] = [
   {
     id: 4,
     name: "Bus 4",
-    lat: 37.9851,
-    lng: 23.7315,
+    lat: 37.964138747263746,
+    lng: 23.66074258648266,
     speed: 60,
     students: 5,
     speeding: false,
@@ -173,7 +173,7 @@ export default function Home() {
                     ? { lat: selectedBus.lat, lng: selectedBus.lng }
                     : center
                 }
-                zoom={15}
+                zoom={14}
               >
                 {buses.map((bus) => (
                   <Marker

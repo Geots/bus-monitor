@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import mqtt from "mqtt";
 import LiveMap from "./components/LiveMap";
 
-const from = { latitude: 37.9838, longitude: 23.7275 };
+const from = { latitude: 37.990681948701905, longitude: 23.677086735467476 };
 const destination = {
   latitude: 37.97743299485048,
   longitude: 23.673475337091762,
@@ -20,7 +20,7 @@ export default function ParentScreen() {
     const TOPIC_WARNING = "bus_tracker/warnings";
 
     client.on("connect", () => {
-      console.log("Parent App: MQTT Connected successfully");
+      console.log("MQTT Connected");
       client.subscribe([TOPIC_DATA, TOPIC_WARNING]);
     });
 
@@ -60,7 +60,7 @@ export default function ParentScreen() {
         <LiveMap
           currentLocation={busLocation}
           destination={destination}
-          markerTitle="School Bus"
+          markerTitle="Bus"
         />
       </View>
 

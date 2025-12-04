@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import mqtt from "mqtt";
 import LiveMap from "./components/LiveMap";
 
-const from = { latitude: 37.9838, longitude: 23.7275 };
+const from = { latitude: 37.990681948701905, longitude: 23.677086735467476 };
 const destination = {
   latitude: 37.97743299485048,
   longitude: 23.673475337091762,

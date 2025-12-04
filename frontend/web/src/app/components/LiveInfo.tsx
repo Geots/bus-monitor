@@ -97,7 +97,7 @@ const BusTracker: React.FC<BusTrackerProps> = ({
             <div className="border border-red-500 rounded-xl overflow-hidden shadow-lg">
               <div className="bg-red-600 p-2 flex items-center justify-center">
                 <h2 className="text-md font-bold text-white tracking-widest">
-                  Warning
+                  Warning - Bus 1
                 </h2>
               </div>
               <div className="p-4 text-center">
