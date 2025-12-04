@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import mqtt from "mqtt";
 import LiveMap from "./components/LiveMap";
 
@@ -56,6 +56,7 @@ export default function ParentScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Map */}
       <View style={styles.mapWrapper}>
         <LiveMap
           currentLocation={busLocation}
@@ -64,31 +65,26 @@ export default function ParentScreen() {
         />
       </View>
 
+      {/* Speed */}
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Current Speed:</Text>
         <Text style={styles.numberText}>{speed.toFixed(1)} km/h</Text>
       </View>
 
-      <Modal
-        transparent={true}
-        visible={!!warningMessage}
-        onRequestClose={() => setWarningMessage(null)}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Warning</Text>
-            </View>
-            <Text style={styles.modalText}>{warningMessage}</Text>
+      {warningMessage && (
+        <View style={styles.warningContainer}>
+          <View style={styles.warningHeader}>
+            <Text style={styles.warningTitle}>Warning</Text>
             <TouchableOpacity
-              style={styles.buttonClose}
+              style={styles.closeButton}
               onPress={() => setWarningMessage(null)}
             >
-              <Text style={styles.textStyle}>Close</Text>
+              <Text style={styles.closeText}>Close</Text>
             </TouchableOpacity>
           </View>
+          <Text style={styles.warningBodyText}>{warningMessage}</Text>
         </View>
-      </Modal>
+      )}
     </View>
   );
 }
@@ -102,7 +98,7 @@ const styles = StyleSheet.create({
   },
   mapWrapper: {
     width: "100%",
-    height: "80%",
+    height: "70%",
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -110,26 +106,27 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
     backgroundColor: "#fff",
+    marginBottom: 20,
   },
   infoContainer: {
     width: "100%",
-    height: "10%",
+    height: 80,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 20,
-    marginTop: 20,
+    paddingHorizontal: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
+    marginBottom: 15,
   },
   infoText: {
     color: "#000",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
   numberText: {
@@ -137,44 +134,44 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalView: {
-    width: "85%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 15,
-    alignItems: "center",
-  },
-  modalHeader: {
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#d32f2f",
-  },
-  modalText: {
-    marginBottom: 25,
-    textAlign: "center",
-    fontSize: 16,
-    color: "#333",
-  },
-  buttonClose: {
+  warningContainer: {
+    width: "100%",
+    backgroundColor: "#FFF5F7",
     borderRadius: 10,
-    padding: 8,
-    paddingHorizontal: 30,
-    borderWidth: 2,
-    borderColor: "#d32f2f",
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ef9a9a",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  textStyle: {
-    color: "#d32f2f",
-    fontWeight: "bold",
-    textAlign: "center",
+  warningHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  warningTitle: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: "#d32f2f",
+  },
+  closeButton: {
+    backgroundColor: "#d32f2f",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  closeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  warningBodyText: {
+    fontSize: 14,
+    color: "#c62828",
+    marginTop: 5,
   },
 });

@@ -4,7 +4,10 @@
 - Current Location, Temperature, Speed, Distance from other vehicles and number of Students onboard for each bus
 - Real-Time Warnings in case of accident or dangerous driving
 
-Built using: NextJS, Typescript, TailwindCSS.
+## Tech used:
+
+- Web App: NextJS using App Router with Typescript and TailwindCSS
+- Mobile App: React Native
 
 ## Install & Run:
 
