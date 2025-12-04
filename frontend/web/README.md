@@ -1,4 +1,4 @@
-# Real-Time Monitoring Web App for bus fleet.
+# Real-Time Monitoring Web App for bus fleet
 
 - Number of Busses in the fleet
 - Current Location, Temperature, Speed, Distance from other vehicles and number of Students onboard for each bus
