@@ -1,4 +1,4 @@
-# Real-Time Monitoring Web & Mobile App for bus fleet.
+# Real-Time Monitoring Web & Mobile App for bus fleet
 
 ## Tech used:
 
