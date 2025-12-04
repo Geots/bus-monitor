@@ -31,7 +31,6 @@ export interface Bus {
   distance: number;
 }
 
-// Mock bus data
 const initialBuses: Bus[] = [
   {
     id: 1,
@@ -82,19 +81,23 @@ const initialBuses: Bus[] = [
 export default function Home() {
   const [buses, setBuses] = useState<Bus[]>(initialBuses);
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
+  const [warningPopup, setWarningPopup] = useState<string | null>(null);
 
   useEffect(() => {
     const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
 
+    const TOPIC_DATA = "bus_tracker/data";
+    const TOPIC_WARNING = "bus_tracker/warnings";
+
     client.on("connect", () => {
-      client.subscribe("bus_tracker/data");
+      console.log("MQTT Connected");
+      client.subscribe([TOPIC_DATA, TOPIC_WARNING]);
     });
 
     client.on("message", (topic, message) => {
-      if (topic === "bus_tracker/data") {
+      if (topic === TOPIC_DATA) {
         try {
           const payload = JSON.parse(message.toString());
-
           setBuses((prevBuses) =>
             prevBuses.map((bus) => {
               if (bus.id === 1) {
@@ -108,12 +111,9 @@ export default function Home() {
                   distance: payload.distance ?? bus.distance,
                 };
 
-                setSelectedBus((currentSelected) => {
-                  if (currentSelected && currentSelected.id === 1) {
-                    return newBusData;
-                  }
-                  return currentSelected;
-                });
+                if (selectedBus && selectedBus.id === 1) {
+                  setSelectedBus(newBusData);
+                }
 
                 return newBusData;
               }
@@ -121,7 +121,15 @@ export default function Home() {
             })
           );
         } catch (error) {
-          console.error("Error:", error);
+          console.error("Error parsing data:", error);
+        }
+      }
+
+      if (topic === TOPIC_WARNING) {
+        setWarningPopup(message.toString());
+        const bus1 = buses.find((b) => b.id === 1);
+        if (bus1) {
+          setSelectedBus(bus1);
         }
       }
     });
@@ -129,10 +137,10 @@ export default function Home() {
     return () => {
       if (client.connected) client.end();
     };
-  }, []);
+  }, [selectedBus]);
 
   return (
-    <div className="font-sans min-h-screen bg-gray-300 flex flex-col">
+    <div className="font-sans min-h-screen bg-gray-300 flex flex-col relative">
       {/* Header */}
       <div className="w-full mb-2 bg-gradient-to-r from-green-900 to-emerald-700 text-white p-4 shadow-md flex flex-col md:flex-row items-center justify-center gap-6">
         <h1 className="text-2xl md:text-3xl font-bold text-center">
@@ -154,7 +162,6 @@ export default function Home() {
             />
           </div>
 
-          {/* Map */}
           <div className="lg:col-span-7 h-full bg-white rounded-xl shadow-xl overflow-hidden relative">
             <LoadScript
               googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
@@ -175,13 +182,12 @@ export default function Home() {
                     onClick={() => setSelectedBus(bus)}
                   />
                 ))}
-
                 {selectedBus && (
                   <InfoWindow
                     position={{ lat: selectedBus.lat, lng: selectedBus.lng }}
                     onCloseClick={() => setSelectedBus(null)}
                   >
-                    <div className="p-2 min-w-[150px]">
+                    <div className="pb-2 min-w-[150px]">
                       <h2 className="font-bold text-lg text-gray-800">
                         {selectedBus.name}
                       </h2>
@@ -195,9 +201,12 @@ export default function Home() {
             </LoadScript>
           </div>
 
-          {/* Live Info */}
           <div className="lg:col-span-3 h-full">
-            <BusTracker selectedBus={selectedBus} />
+            <BusTracker
+              selectedBus={selectedBus}
+              warningMessage={warningPopup}
+              onDismissWarning={() => setWarningPopup(null)}
+            />
           </div>
         </div>
       </div>
