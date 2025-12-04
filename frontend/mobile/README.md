@@ -1,4 +1,4 @@
-# Real-Time Bus Info for the Driver and Parent.
+# Real-Time Bus Info for the Driver and Parent
 
 Built using: React Native.
 
